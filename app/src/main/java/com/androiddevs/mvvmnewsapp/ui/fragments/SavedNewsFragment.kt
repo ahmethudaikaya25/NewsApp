@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,22 +12,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.androiddevs.mvvmnewsapp.R
 import com.androiddevs.mvvmnewsapp.adapters.NewsAdapter
 import com.androiddevs.mvvmnewsapp.databinding.FragmentSavedNewsBinding
-import com.androiddevs.mvvmnewsapp.databinding.FragmentSearchNewsBinding
-import com.androiddevs.mvvmnewsapp.ui.NewsActivity
 import com.androiddevs.mvvmnewsapp.ui.viewmodels.NewsViewModel
-import com.androiddevs.mvvmnewsapp.util.Resource
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SavedNewsFragment: Fragment(R.layout.fragment_saved_news) {
 
     lateinit var binding: FragmentSavedNewsBinding
-    lateinit var newsViewModel: NewsViewModel
+    val newsViewModel: NewsViewModel by viewModels()
     private lateinit var newsAdapter: NewsAdapter
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        newsViewModel = (activity as NewsActivity).newsViewModel
         binding = FragmentSavedNewsBinding.bind(view)
         setupRecycleView()
         newsAdapter.setOnItemClickListener { article ->

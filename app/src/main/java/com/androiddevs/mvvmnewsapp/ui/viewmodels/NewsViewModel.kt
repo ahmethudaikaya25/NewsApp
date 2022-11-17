@@ -9,13 +9,16 @@ import com.androiddevs.mvvmnewsapp.ui.repositories.NewsRepository
 import com.androiddevs.mvvmnewsapp.util.Constants
 import com.androiddevs.mvvmnewsapp.util.InternetStateProvider
 import com.androiddevs.mvvmnewsapp.util.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.io.IOException
+import javax.inject.Inject
 
-class NewsViewModel(
-    val internetStateProvider: InternetStateProvider,
-    val newsRepository: NewsRepository
+@HiltViewModel
+class NewsViewModel @Inject constructor(
+    private val internetStateProvider: InternetStateProvider,
+    private val newsRepository: NewsRepository
 ) : ViewModel() {
     val breakingNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
     var breakingNewsPage = 1

@@ -1,25 +1,26 @@
 package com.androiddevs.mvvmnewsapp.ui.repositories
 
-import com.androiddevs.mvvmnewsapp.data.api.RetrofitInstance
-import com.androiddevs.mvvmnewsapp.data.db.ArticleDatabase
+import com.androiddevs.mvvmnewsapp.data.api.NewsAPI
+import com.androiddevs.mvvmnewsapp.data.db.ArticleDao
 import com.androiddevs.mvvmnewsapp.data.model.Article
 
-class NewsRepository(
-    val db: ArticleDatabase
+class NewsRepository (
+    private val api: NewsAPI,
+    private val dao: ArticleDao
 ) {
     suspend fun getBreakingNews(countryCode: String, pageNumber: Int) =
-        RetrofitInstance.api.getBreakingNews(countryCode, pageNumber)
+        api.getBreakingNews(countryCode, pageNumber)
 
     suspend fun searchNews(searchQuery: String, pageNumber: Int) =
-        RetrofitInstance.api.searchNews(searchQuery, pageNumber)
+        api.searchNews(searchQuery, pageNumber)
 
     suspend fun upsertArticle(article: Article) =
-        db.getArticleDao().upsert(article)
+        dao.upsert(article)
 
     fun getAllArticles() =
-        db.getArticleDao().getAllArticles()
+        dao.getAllArticles()
 
     suspend fun deleteArticle(article: Article) =
-        db.getArticleDao().deleteArticle(article)
+        dao.deleteArticle(article)
 
 }

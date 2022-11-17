@@ -1,36 +1,35 @@
 package com.androiddevs.mvvmnewsapp.ui.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.AbsListView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.androiddevs.mvvmnewsapp.R
 import com.androiddevs.mvvmnewsapp.adapters.NewsAdapter
 import com.androiddevs.mvvmnewsapp.databinding.FragmentBreakingNewsBinding
-import com.androiddevs.mvvmnewsapp.ui.NewsActivity
 import com.androiddevs.mvvmnewsapp.ui.viewmodels.NewsViewModel
 import com.androiddevs.mvvmnewsapp.util.Constants.Companion.DEFAULT_COUNTRY_CODE
 import com.androiddevs.mvvmnewsapp.util.Constants.Companion.QUERY_PAGE_SIZE
 import com.androiddevs.mvvmnewsapp.util.Resource
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class BreakingNewsFragment: Fragment(R.layout.fragment_breaking_news) {
 
-    private lateinit var newsViewModel: NewsViewModel
+    val newsViewModel: NewsViewModel by viewModels()
     private lateinit var newsAdapter: NewsAdapter
     private lateinit var binding: FragmentBreakingNewsBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentBreakingNewsBinding.bind(view)
-        newsViewModel = (activity as NewsActivity).newsViewModel
         setupRecycleView()
 
         newsAdapter.setOnItemClickListener { article ->

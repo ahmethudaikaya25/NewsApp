@@ -1,37 +1,36 @@
 package com.androiddevs.mvvmnewsapp.ui.fragments
 
 import android.os.Bundle
-import android.util.Log
-import android.view.KeyEvent
 import android.view.View
 import android.widget.AbsListView
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.androiddevs.mvvmnewsapp.R
 import com.androiddevs.mvvmnewsapp.adapters.NewsAdapter
 import com.androiddevs.mvvmnewsapp.databinding.FragmentSearchNewsBinding
-import com.androiddevs.mvvmnewsapp.ui.NewsActivity
 import com.androiddevs.mvvmnewsapp.ui.viewmodels.NewsViewModel
 import com.androiddevs.mvvmnewsapp.util.Constants
 import com.androiddevs.mvvmnewsapp.util.Resource
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class SearchNewsFragment: Fragment(R.layout.fragment_search_news) {
     lateinit var binding: FragmentSearchNewsBinding
-    lateinit var newsViewModel: NewsViewModel
+    val newsViewModel: NewsViewModel by viewModels()
     private lateinit var newsAdapter: NewsAdapter
     private val TAG = "SearchNewsFragment"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        newsViewModel = (activity as NewsActivity).newsViewModel
         binding = FragmentSearchNewsBinding.bind(view)
 
         setupRecycleView()
