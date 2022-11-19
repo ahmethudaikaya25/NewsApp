@@ -2,10 +2,9 @@ package com.androiddevs.mvvmnewsapp.ui.fragments
 
 import android.os.Bundle
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.widget.AbsListView
 import android.widget.Toast
+import androidx.databinding.ObservableBoolean
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -14,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.androiddevs.mvvmnewsapp.R
 import com.androiddevs.mvvmnewsapp.adapters.NewsAdapter
 import com.androiddevs.mvvmnewsapp.databinding.FragmentBreakingNewsBinding
-import com.androiddevs.mvvmnewsapp.ui.viewmodels.NewsViewModel
+import com.androiddevs.mvvmnewsapp.ui.viewmodels.BreakingNewsViewModel
 import com.androiddevs.mvvmnewsapp.util.Constants.Companion.DEFAULT_COUNTRY_CODE
 import com.androiddevs.mvvmnewsapp.util.Constants.Companion.QUERY_PAGE_SIZE
 import com.androiddevs.mvvmnewsapp.util.Resource
@@ -23,16 +22,16 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class BreakingNewsFragment: Fragment(R.layout.fragment_breaking_news) {
 
-    val newsViewModel: NewsViewModel by viewModels()
+    val viewModel: BreakingNewsViewModel by viewModels()
     private lateinit var newsAdapter: NewsAdapter
     private lateinit var binding: FragmentBreakingNewsBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentBreakingNewsBinding.bind(view)
-        setupRecycleView()
-
-        newsAdapter.setOnItemClickListener { article ->
+        binding.scrollViewListener = this.scrollListener
+        binding.visibility = obsIsLoading
+        newsAdapter = NewsAdapter { article ->
             val bundle = Bundle().apply {
                 putSerializable("article", article)
             }
@@ -41,15 +40,16 @@ class BreakingNewsFragment: Fragment(R.layout.fragment_breaking_news) {
                 bundle
             )
         }
+        binding.adapter = newsAdapter
 
-        newsViewModel.breakingNews.observe(viewLifecycleOwner) { response ->
+        viewModel.breakingNews.observe(viewLifecycleOwner) { response ->
             when (response) {
                 is Resource.Success -> {
                     hideProgressBar()
                     response.data?.let {
                         newsAdapter.differ.submitList(it.articles.toList())
                         val totalPages = it.totalResults / QUERY_PAGE_SIZE + 2
-                        isLastPage = newsViewModel.breakingNewsPage == totalPages
+                        isLastPage = viewModel.breakingNewsPage == totalPages
                         if (isLastPage)
                             binding.rvBreakingNews.setPadding(0,0,0,0)
                     }
@@ -68,18 +68,17 @@ class BreakingNewsFragment: Fragment(R.layout.fragment_breaking_news) {
                 }
             }
         }
+
+        showProgressBar()
     }
 
     private fun hideProgressBar() {
-        binding.paginationProgressBar.visibility = GONE
-        isLoading = false
+        obsIsLoading.set(false)
     }
     private fun showProgressBar() {
-        binding.paginationProgressBar.visibility = VISIBLE
-        isLoading = true
+        obsIsLoading.set(true)
     }
-
-    var isLoading = false
+    var obsIsLoading = ObservableBoolean(false)
     var isLastPage = false
     var isScrolling = false
 
@@ -91,14 +90,14 @@ class BreakingNewsFragment: Fragment(R.layout.fragment_breaking_news) {
             val visibleItemCount = layoutManager.childCount
             val totalItemCount = layoutManager.itemCount
 
-            val isNotLoadingAndNotLastPage = !isLoading && !isLastPage
+            val isNotLoadingAndNotLastPage = !obsIsLoading.get() && !isLastPage
             val isAtLastItem = firstVisibleItemPosition + visibleItemCount >= totalItemCount
             val isNotAtBeginning = firstVisibleItemPosition >= 0
             val isTotalMoreThanVisible = totalItemCount >= QUERY_PAGE_SIZE
             val shouldPaginate = isNotLoadingAndNotLastPage && isAtLastItem && isNotAtBeginning &&
                                     isTotalMoreThanVisible && isScrolling
             if (shouldPaginate) {
-                newsViewModel.getBreakingNews(DEFAULT_COUNTRY_CODE)
+                viewModel.getBreakingNews(DEFAULT_COUNTRY_CODE)
                 isScrolling = false
             }
         }
@@ -108,15 +107,6 @@ class BreakingNewsFragment: Fragment(R.layout.fragment_breaking_news) {
             if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
                 isScrolling = true
             }
-        }
-    }
-
-    private fun setupRecycleView() {
-        newsAdapter = NewsAdapter()
-        binding.rvBreakingNews.apply {
-            adapter = newsAdapter
-            layoutManager = LinearLayoutManager(activity)
-            addOnScrollListener(this@BreakingNewsFragment.scrollListener)
         }
     }
 }

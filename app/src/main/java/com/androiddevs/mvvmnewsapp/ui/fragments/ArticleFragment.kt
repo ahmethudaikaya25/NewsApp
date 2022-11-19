@@ -8,13 +8,13 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.androiddevs.mvvmnewsapp.R
 import com.androiddevs.mvvmnewsapp.databinding.FragmentArticleBinding
-import com.androiddevs.mvvmnewsapp.ui.viewmodels.NewsViewModel
+import com.androiddevs.mvvmnewsapp.ui.viewmodels.ArticleViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ArticleFragment : Fragment(R.layout.fragment_article) {
-    val newsViewModel: NewsViewModel by viewModels()
+    val viewModel: ArticleViewModel by viewModels()
     lateinit var binding: FragmentArticleBinding
     private val args: ArticleFragmentArgs by navArgs()
 
@@ -22,13 +22,9 @@ class ArticleFragment : Fragment(R.layout.fragment_article) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentArticleBinding.bind(view)
         val article = args.article
-        binding.webView.apply {
-            webViewClient = WebViewClient()
-            article.url?.let { loadUrl(it) }
-        }
-
-        binding.fab.setOnClickListener {
-            newsViewModel.saveArticle(article)
+        binding.url = article.url
+        binding.favoriteButtonOnClick = View.OnClickListener {
+            viewModel.saveArticle(article)
             Snackbar.make(view, "Article added among your favorites", Snackbar.LENGTH_SHORT).show()
         }
     }

@@ -1,12 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvSavedNews"
+    <data>
+        <variable
+            name="adapter"
+            type="com.androiddevs.mvvmnewsapp.adapters.NewsAdapter" />
+        <variable
+            name="itemTouchListenerCallBack"
+            type="androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback" />
+    </data>
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
 
-</FrameLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSavedNews"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adapter="@{adapter}"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:itemTouchListener="@{itemTouchListenerCallBack}" />
+
+    </FrameLayout>
+</layout>
