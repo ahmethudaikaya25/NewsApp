@@ -5,6 +5,8 @@ import android.os.Bundle
 import androidx.core.view.get
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.androiddevs.mvvmnewsapp.data.model.Article
+import com.androiddevs.mvvmnewsapp.data.model.Source
 import com.androiddevs.mvvmnewsapp.databinding.ActivityNewsBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -18,5 +20,5 @@ class NewsActivity : AppCompatActivity() {
         binding = ActivityNewsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.bottomNavigationView.setupWithNavController(binding.flFragment[0].findNavController())
-    }
+     }
 }

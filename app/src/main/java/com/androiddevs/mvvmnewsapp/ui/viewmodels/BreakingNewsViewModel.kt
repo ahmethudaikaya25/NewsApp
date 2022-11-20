@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.androiddevs.mvvmnewsapp.data.model.NewsResponse
 import com.androiddevs.mvvmnewsapp.ui.repositories.NewsRepository
+import com.androiddevs.mvvmnewsapp.usecases.GetBreakingNewsUseCase
 import com.androiddevs.mvvmnewsapp.util.Constants
 import com.androiddevs.mvvmnewsapp.util.InternetStateProvider
 import com.androiddevs.mvvmnewsapp.util.Resource
@@ -17,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class BreakingNewsViewModel @Inject constructor(
     private val internetStateProvider: InternetStateProvider,
-    private val newsRepository: NewsRepository
+    private val getBreakingNewsUseCase: GetBreakingNewsUseCase
 ) : ViewModel() {
     val breakingNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
     var breakingNewsPage = 1
@@ -36,7 +37,7 @@ class BreakingNewsViewModel @Inject constructor(
         breakingNews.postValue(Resource.Loading())
         try {
             if (internetStateProvider.check()) {
-                val response = newsRepository.getBreakingNews(countryCode, breakingNewsPage)
+                val response = getBreakingNewsUseCase.invoke(countryCode, breakingNewsPage)
                 breakingNews.postValue(handleBreakingNewsResponse(response))
             } else {
                 breakingNews.postValue(Resource.Error(message = "There is no internet"))

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.androiddevs.mvvmnewsapp.data.model.NewsResponse
 import com.androiddevs.mvvmnewsapp.ui.repositories.NewsRepository
+import com.androiddevs.mvvmnewsapp.usecases.SearchArticleUseCase
 import com.androiddevs.mvvmnewsapp.util.InternetStateProvider
 import com.androiddevs.mvvmnewsapp.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,6 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchNewsViewModel @Inject constructor(
     private val internetStateProvider: InternetStateProvider,
+    private val searchNewsUseCase: SearchArticleUseCase,
     private val newsRepository: NewsRepository
 ) : ViewModel() {
     val searchedNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
